@@ -79,7 +79,7 @@ $app->post('/danmu',function(){
     $danmu->save();
     $res = \Illuminate\Support\Facades\DB::table('danmu')->join('user','user.id','=','danmu.user_id')->where('audio_id',$audioId)->where('danmu.id',$danmu->id)->selectRaw('images,name,audio_id,msg,user_id,send_second')->get();
     foreach ($res as $key=>$val) {
-        $res[$key]->text = '<img  src="'."http://{$_SERVER['HTTP_HOST']}/listenbook/disk/{$val->images}".'"/><div class="text-desc"><span class="name-label">'.((mb_strlen($val->name)>8)?(mb_substr($val->name,8) . '...'):$val->name).'</span><span>'.$val->msg.'</span></div>';
+        $res[$key]->text = '<img  src="'. env('IMGURL') . "{$val->images}".'"/><div class="text-desc"><span class="name-label">'.((mb_strlen($val->name)>8)?(mb_substr($val->name,8) . '...'):$val->name).'</span><span>'.$val->msg.'</span></div>';
     }
     echo json_encode(['status'=>true,'data'=>$res],JSON_UNESCAPED_UNICODE);
     exit;
