@@ -96,10 +96,12 @@ $app->post('/vip',function(){
     $saleConfig = json_decode($config->config_value);
 
     $sale = 10;
-    foreach ($saleConfig as $item) {
-        if($item->level == $user->vip_level) {
-            $sale = $item->sale;
-            break;
+    if(!$user->role) {
+        foreach ($saleConfig as $item) {
+            if ($item->level == $user->vip_level) {
+                $sale = $item->sale;
+                break;
+            }
         }
     }
 
