@@ -64,7 +64,7 @@ check_param($param, false, function($p){
 
         //TODO:用户等级跃迁
         $config = mysql_fetch_arr("sys_config",array("*"),"id=4")[0];
-        $confgValue = $config->config_value;
+        $confgValue = json_decode($config->config_value);
 
         $levelTotal = $user->has_used_volley + $giftPrice;
         $vip_level = 0;
