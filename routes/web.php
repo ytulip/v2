@@ -112,30 +112,46 @@ $app->post('/vip',function(){
 
 $app->post('/bang',function(){
     header("Access-Control-Allow-Origin: *");
-    $selectStr = "id,name,images,favor,favor_cash,favor_gift";
-   $normal = \Illuminate\Support\Facades\DB::table('user')->orderBy('favor','desc')->limit(50)->selectRaw($selectStr)->where('favor','>','0')->get();
-   $cash = \Illuminate\Support\Facades\DB::table('user')->orderBy('favor_cash','desc')->limit(50)->where('favor_cash','>','0')->selectRaw($selectStr)->get();
-   $gift = \Illuminate\Support\Facades\DB::table('user')->orderBy('favor_gift','desc')->limit(50)->where('favor_gift','>','0')->selectRaw($selectStr)->get();
+    $selectStr = "id,name,images,used_favor,used_favor_cash,used_favor_gift";
+   $normal = \Illuminate\Support\Facades\DB::table('user')->orderBy('used_favor','desc')->limit(50)->selectRaw($selectStr)->where('used_favor','>','0')->get();
+   $cash = \Illuminate\Support\Facades\DB::table('user')->orderBy('used_favor_cash','desc')->limit(50)->where('used_favor_cash','>','0')->selectRaw($selectStr)->get();
+   $gift = \Illuminate\Support\Facades\DB::table('user')->orderBy('used_favor_gift','desc')->limit(50)->where('used_favor_gift','>','0')->selectRaw($selectStr)->get();
 
    foreach ($normal as $key=>$val) {
-       $normal[$key]->bang_price = $val->favor;
+       $normal[$key]->bang_price = $val->used_favor;
        $normal[$key]->bang_price_format = number_format($normal[$key]->bang_price);
        $normal[$key]->image_path = env('IMGURL') . $val->images;
    }
 
    foreach ($cash as $key=>$val) {
-       $cash[$key]->bang_price = $val->favor_cash;
+       $cash[$key]->bang_price = $val->used_favor_cash;
        $cash[$key]->bang_price_format = number_format($cash[$key]->bang_price);
        $cash[$key]->image_path = env('IMGURL') . $val->images;
    }
 
    foreach ($gift as $key=>$val) {
-       $gift[$key]->bang_price = $val->favor_gift;
+       $gift[$key]->bang_price = $val->used_favor_gift;
        $gift[$key]->bang_price_format = number_format($gift[$key]->bang_price);
        $gift[$key]->image_path = env('IMGURL') . $val->images;
    }
 
     echo json_encode(['status'=>true,'data'=>['normal'=>$normal,'cash'=>$cash,'gift'=>$gift]],JSON_UNESCAPED_UNICODE);
+    exit;
+});
+
+
+$app->post('/zhubobang',function(){
+    header("Access-Control-Allow-Origin: *");
+    $selectStr = "id,name,images,favor,favor_cash,favor_gift";
+    $normal = \Illuminate\Support\Facades\DB::table('user')->orderBy('favor','desc')->limit(50)->selectRaw($selectStr)->where('favor','>','0')->where('role',1)->get();
+
+    foreach ($normal as $key=>$val) {
+        $normal[$key]->bang_price = $val->favor;
+        $normal[$key]->bang_price_format = number_format($normal[$key]->bang_price);
+        $normal[$key]->image_path = env('IMGURL') . $val->images;
+    }
+
+    echo json_encode(['status'=>true,'data'=>['normal'=>$normal]],JSON_UNESCAPED_UNICODE);
     exit;
 });
 
