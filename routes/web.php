@@ -113,9 +113,9 @@ $app->post('/vip',function(){
 $app->post('/bang',function(){
     header("Access-Control-Allow-Origin: *");
     $selectStr = "id,name,images,used_favor,used_favor_cash,used_favor_gift";
-   $normal = \Illuminate\Support\Facades\DB::table('user')->orderBy('used_favor','desc')->limit(50)->selectRaw($selectStr)->where('used_favor','>','0')->get();
-   $cash = \Illuminate\Support\Facades\DB::table('user')->orderBy('used_favor_cash','desc')->limit(50)->where('used_favor_cash','>','0')->selectRaw($selectStr)->get();
-   $gift = \Illuminate\Support\Facades\DB::table('user')->orderBy('used_favor_gift','desc')->limit(50)->where('used_favor_gift','>','0')->selectRaw($selectStr)->get();
+   $normal = \Illuminate\Support\Facades\DB::table('user')->orderBy('used_favor','desc')->limit(100)->selectRaw($selectStr)->where('used_favor','>','0')->get();
+   $cash = \Illuminate\Support\Facades\DB::table('user')->orderBy('used_favor_cash','desc')->limit(100)->where('used_favor_cash','>','0')->selectRaw($selectStr)->get();
+   $gift = \Illuminate\Support\Facades\DB::table('user')->orderBy('used_favor_gift','desc')->limit(100)->where('used_favor_gift','>','0')->selectRaw($selectStr)->get();
 
    foreach ($normal as $key=>$val) {
        $normal[$key]->bang_price = $val->used_favor;
