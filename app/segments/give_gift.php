@@ -60,7 +60,8 @@ check_param($param, false, function($p){
     $giftPrice = $gift->gift_price * $giftCount;
 
     if($user->volley >= $giftPrice){
-        mysql_update_dic($tbl_user, array("volley"=>($user->volley - $giftPrice),"has_used_volley"=>$user->has_used_volley + $giftPrice), "id={$p[user_id]}");
+        $favorPrice = $giftPrice * 100;
+        mysql_update_dic($tbl_user, array("volley"=>($user->volley - $giftPrice),"has_used_volley"=>$user->has_used_volley + $giftPrice,"used_favor"=>$user->used_favor +  $favorPrice,"used_favor_gift"=>$user->used_favor_gift +  $favorPrice), "id={$p[user_id]}");
 
         //TODO:用户等级跃迁
         $config = mysql_fetch_arr("sys_config",array("*"),"id=4")[0];
@@ -85,7 +86,7 @@ check_param($param, false, function($p){
 
 
         // 更新主播余额
-        $favorPrice = $giftPrice * 100;
+        //$favorPrice = $giftPrice * 100;
         $sql = "UPDATE user set volley=volley+".$giftPrice.",favor=favor + {$favorPrice} ,favor_gift= favor_gift + {$favorPrice} where id=".$zhuboUser->id."";
         mysql_query_sql($sql);
         // 更新主播余额 end
