@@ -144,3 +144,25 @@ $app->post('/give_zhubo_gift',function(){
     header("Access-Control-Allow-Origin: *");
     include app('path') . '/segments/give_gift.php';
 });
+
+
+$app->post('/bind_phone',function(){
+    header("Access-Control-Allow-Origin: *");
+//    include app('path') . '/segments/give_gift.php';
+    $user = \App\Model\User::find($_REQUEST['user_id']);
+    if(!$user) {
+        echo json_encode(['status'=>false,'msg'=>"用户不存在"]);
+        exit;
+    }
+
+    if($user->phone) {
+        echo json_encode(['status'=>false,'msg'=>"该用户已绑定手机号"]);
+        exit;
+    }
+
+    $user->phone = $_REQUEST['phone'];
+    $user->password = $_REQUEST['password'];
+    $user->save();
+    echo json_encode(['status'=>true,'msg'=>"该用户已绑定手机号"]);
+    exit;
+});
