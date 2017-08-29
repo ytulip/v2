@@ -56,9 +56,9 @@ $app->get('/charge_set',function(){
 $app->get('/danmu_search',function(){
     header("Access-Control-Allow-Origin: *");
     $audioId = $_REQUEST['audio_id'];
-    $res = \Illuminate\Support\Facades\DB::table('danmu')->join('user','user.id','=','danmu.user_id')->where('audio_id',$audioId)->selectRaw('images,name,audio_id,msg,user_id,send_second')->get();
+    $res = \Illuminate\Support\Facades\DB::table('danmu')->leftJoin('user','user.id','=','danmu.user_id')->where('audio_id',$audioId)->selectRaw('images,name,audio_id,msg,user_id,send_second')->get();
     foreach ($res as $key=>$val) {
-        $res[$key]->text = '<img  src="'."http://{$_SERVER['HTTP_HOST']}/listenbook/disk/{$val->images}".'"/><div class="text-desc"><span class="name-label">'.((mb_strlen($val->name)>8)?(mb_substr($val->name,8) . '...'):$val->name).'</span><span>'.$val->msg.'</span></div>';
+        $res[$key]->text =  '<img  src="'. env('IMGURL') . "{$val->images}".'"/><div class="text-desc"><span class="name-label">'.((mb_strlen($val->name)>8)?(mb_substr($val->name,8) . '...'):$val->name).'</span><span>'.$val->msg.'</span></div>';
     }
     echo json_encode(['status'=>true,'data'=>$res],JSON_UNESCAPED_UNICODE);
     exit;
@@ -77,7 +77,7 @@ $app->post('/danmu',function(){
     $danmu->send_second = $_REQUEST['time'];
     $danmu->msg = $msg;
     $danmu->save();
-    $res = \Illuminate\Support\Facades\DB::table('danmu')->join('user','user.id','=','danmu.user_id')->where('audio_id',$audioId)->where('danmu.id',$danmu->id)->selectRaw('images,name,audio_id,msg,user_id,send_second')->get();
+    $res = \Illuminate\Support\Facades\DB::table('danmu')->leftJoin('user','user.id','=','danmu.user_id')->where('audio_id',$audioId)->where('danmu.id',$danmu->id)->selectRaw('images,name,audio_id,msg,user_id,send_second')->get();
     foreach ($res as $key=>$val) {
         $res[$key]->text = '<img  src="'. env('IMGURL') . "{$val->images}".'"/><div class="text-desc"><span class="name-label">'.((mb_strlen($val->name)>8)?(mb_substr($val->name,8) . '...'):$val->name).'</span><span>'.$val->msg.'</span></div>';
     }
@@ -94,6 +94,8 @@ $app->post('/vip',function(){
     $user = \App\Model\User::find($userId);
     $config = \App\Model\SysConfig::find(4);
     $saleConfig = json_decode($config->config_value);
+
+    //是否一分钟之内不允许支付呀
 
     $sale = 10;
     if(!$user->role) {
@@ -179,6 +181,6 @@ $app->post('/bind_phone',function(){
     $user->phone = $_REQUEST['phone'];
     $user->password = $_REQUEST['password'];
     $user->save();
-    echo json_encode(['status'=>true,'msg'=>"该用户已绑定手机号"]);
+    echo json_encode(['status'=>true]);
     exit;
 });
