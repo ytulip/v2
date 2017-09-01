@@ -184,3 +184,18 @@ $app->post('/bind_phone',function(){
     echo json_encode(['status'=>true]);
     exit;
 });
+
+$app->post('/level',function(){
+    header("Access-Control-Allow-Origin: *");
+    $user = \App\Model\User::find($_REQUEST['user_id']);
+    if(!$user) {
+        echo json_encode(['status'=>false,'msg'=>"用户不存在"]);
+        exit;
+    }
+
+    echo json_encode(['status'=>true,'data'=>[
+        'img_url'=> env('IMGURL') . $user->images,
+        ''
+    ]]);
+    exit;
+});
