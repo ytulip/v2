@@ -193,9 +193,42 @@ $app->post('/level',function(){
         exit;
     }
 
+    $config = \App\Model\SysConfig::find(4);
+    $saleConfig = json_decode($config->config_value);
+
+
+    $ind = -1;
+    foreach ($saleConfig as $key=>$item) {
+        if ($item->level == $user->vip_level) {
+            $ind = $key;
+            break;
+        }
+    }
+
+    if($ind === -1) {
+        $brand = '用户';
+        $dou = $user->has_used_volley;
+        $next_brand_dou = 188;
+        $percent = round($dou/188) * 100;
+    } else {
+        $brand = $saleConfig[$ind]->name;
+        $dou = $user->has_used_volley;
+        if( $dou > 1888) {
+            $next_brand_dou = 0;
+            $percent = 100;
+        } else {
+            $next_brand_dou = $saleConfig[$ind + 1]->volley - $dou;
+            $percent = round($dou/1888) * 100;
+        }
+    }
+
+
     echo json_encode(['status'=>true,'data'=>[
         'img_url'=> env('IMGURL') . $user->images,
-        ''
-    ]]);
+        'brand'=>$brand,
+        'dou'=>$dou,
+        'next_brand_dou'=>$next_brand_dou,
+        'percent'=>$percent
+    ]],JSON_UNESCAPED_UNICODE);
     exit;
 });
